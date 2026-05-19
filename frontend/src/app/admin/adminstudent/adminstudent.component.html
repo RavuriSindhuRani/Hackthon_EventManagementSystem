@@ -1,0 +1,61 @@
+<div class="student-container">
+  <div class="header">
+    <h2><i class="fa-solid fa-graduation-cap"></i> Student Directory</h2>
+    <p>Manage student profiles and track their community impact.</p>
+  </div>
+
+  <div class="search-bar-card card">
+    <div class="search-input">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input 
+        type="text" 
+        placeholder="Search by name or email..." 
+        [(ngModel)]="searchTerm"
+        (input)="filterStudents()">
+    </div>
+    <div class="filters">
+      <button class="filter-btn active">All Students</button>
+      <button class="filter-btn">Highly Active</button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loader">
+    <div class="spinner"></div>
+    <p>Loading student profiles...</p>
+  </div>
+
+  <div *ngIf="!loading" class="student-grid">
+    <div class="student-card card" *ngFor="let student of filteredStudents">
+      <div class="info-section">
+        <h3 style="display: flex; align-items: center; justify-content: center; gap: 10px;">
+          {{ student.firstName }} {{ student.lastName }}
+          <span class="badge" [ngClass]="student.accountStatus.toLowerCase()" style="font-size: 10px;">{{ student.accountStatus }}</span>
+        </h3>
+        <p class="email">{{ student.email }}</p>
+        <p class="bio">{{ student.bio || 'No bio provided' }}</p>
+      </div>
+
+      <div class="stats-row" style="grid-template-columns: 1fr;">
+        <div class="stat">
+          <label>Event Participation</label>
+          <span style="font-size: 20px;">{{ student.participationCount }}</span>
+        </div>
+      </div>
+
+      <div class="skills-tags">
+        <span class="skill-tag" *ngFor="let skill of student.skills | slice:0:3">{{ skill }}</span>
+        <span class="skill-tag more" *ngIf="student.skills?.length > 3">+{{ student.skills.length - 3 }}</span>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-outline" (click)="viewImpact(student)">View Full History</button>
+        <button class="btn-icon"><i class="fa-solid fa-envelope"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && filteredStudents.length === 0" class="no-data">
+    <i class="fa-solid fa-user-slash"></i>
+    <p>No students found matching your search.</p>
+  </div>
+</div>

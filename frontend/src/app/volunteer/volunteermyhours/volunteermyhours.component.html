@@ -1,0 +1,111 @@
+<div class="hours-container">
+  <div class="header-section">
+    <div class="welcome">
+      <h2>Your Volunteer Contributions</h2>
+      <p>Track every hour spent making a difference.</p>
+    </div>
+    <button class="btn-log" (click)="openLogModal()">
+      <i class="fa-solid fa-plus"></i> Log New Hours
+    </button>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-mini-card emerald">
+      <div class="mini-icon"><i class="fa-solid fa-award"></i></div>
+      <div class="mini-content">
+        <h3>{{ stats.total }}</h3>
+        <p>Total Approved Hours</p>
+      </div>
+    </div>
+    <div class="stat-mini-card amber">
+      <div class="mini-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+      <div class="mini-content">
+        <h3>{{ stats.pending }}</h3>
+        <p>Pending Approval</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loader">
+    <div class="spinner"></div>
+    <p>Loading your impact history...</p>
+  </div>
+
+  <!-- HOURS LIST -->
+  <div *ngIf="!loading && hourRecords.length > 0" class="card history-card">
+    <div class="card-header">
+      <h3>Contribution History</h3>
+    </div>
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Date</th>
+            <th>Hours</th>
+            <th>Description</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let record of hourRecords">
+            <td class="font-bold">{{ record.eventId?.title }}</td>
+            <td>{{ record.createdAt | date:'mediumDate' }}</td>
+            <td><span class="hours-badge">{{ record.hoursContributed }}h</span></td>
+            <td class="desc-cell">{{ record.description || 'Regular volunteering' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="record.status.toLowerCase()">
+                {{ record.status | titlecase }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && hourRecords.length === 0" class="no-data">
+    <div class="no-data-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+    <p>You haven't logged any volunteer hours yet. Start by joining an event!</p>
+    <button class="btn-primary" routerLink="/volunteer/events">Discover Events</button>
+  </div>
+
+  <!-- LOG HOURS MODAL -->
+  <div class="modal-overlay" *ngIf="showLogModal" (click)="closeLogModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Submit Your Hours</h3>
+        <p>Tell us about your contribution today.</p>
+        <button class="close-btn" (click)="closeLogModal()">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Select Event</label>
+          <select [(ngModel)]="newEntry.eventId">
+            <option value="" disabled selected>Choose the event you helped with</option>
+            <option *ngFor="let ev of approvedEvents" [value]="ev._id">{{ ev.title }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Hours Contributed</label>
+          <input type="number" [(ngModel)]="newEntry.hoursContributed" placeholder="e.g. 4.5">
+        </div>
+
+        <div class="form-group">
+          <label>What did you do?</label>
+          <textarea [(ngModel)]="newEntry.description" placeholder="Briefly describe your tasks..."></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeLogModal()">Cancel</button>
+        <button class="btn-primary" (click)="submitHours()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Submitting...' : 'Submit for Approval' }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

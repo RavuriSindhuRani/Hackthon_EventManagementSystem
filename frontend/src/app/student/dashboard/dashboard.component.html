@@ -1,0 +1,130 @@
+<div class="student-dashboard">
+  <!-- HEADER -->
+  <div class="header-row">
+    <div class="welcome">
+      <h1>Welcome back, {{ userName }}! 👋</h1>
+      <p>Your journey of impact and learning continues here.</p>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loader">
+    <div class="spinner"></div>
+    <p>Syncing your dashboard...</p>
+  </div>
+
+  <div *ngIf="!isLoading">
+    <!-- STATS -->
+    <div class="stats-grid">
+      <div class="stat-card" routerLink="/student/studentevent" style="cursor: pointer;">
+        <div class="stat-icon orange"><i class="fa-solid fa-file-signature"></i></div>
+        <div class="stat-content">
+          <h2>{{ stats.registeredEvents }}</h2>
+          <p>Registrations</p>
+        </div>
+      </div>
+      <div class="stat-card" routerLink="/student/attendance" style="cursor: pointer;">
+        <div class="stat-icon blue"><i class="fa-solid fa-calendar-check"></i></div>
+        <div class="stat-content">
+          <h2>{{ stats.attendedEvents }}</h2>
+          <p>Attended</p>
+        </div>
+      </div>
+      <div class="stat-card" routerLink="/student/studentevent" style="cursor: pointer;">
+        <div class="stat-icon yellow"><i class="fa-solid fa-hourglass-half"></i></div>
+        <div class="stat-content">
+          <h2>{{ stats.pendingEvents }}</h2>
+          <p>Upcoming</p>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="fa-solid fa-award"></i></div>
+        <div class="stat-content">
+          <h2>{{ stats.certificatesEarned }}</h2>
+          <p>Certificates</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="dashboard-grid">
+      <!-- EXPLORE -->
+      <div class="card event-card">
+        <div class="card-title">
+          <h3>Explore New Events</h3>
+          <button routerLink="/studentevent" class="btn-text">See All</button>
+        </div>
+        <div class="event-list">
+          <div class="event-item" *ngFor="let event of publicEvents">
+            <div class="event-info">
+              <h4>{{ event.title }}</h4>
+              <span class="event-meta"><i class="fa-regular fa-calendar"></i> {{ event.startDateTime | date:'MMM d, h:mm a' }}</span>
+              <span class="event-meta"><i class="fa-solid fa-location-dot"></i> {{ event.venue || 'TBA' }}</span>
+            </div>
+            <div class="event-status">
+              <button (click)="viewDetails(event)" class="btn-register-sm">Details</button>
+            </div>
+          </div>
+          <div *ngIf="publicEvents.length === 0" class="no-events">
+            <i class="fa-solid fa-mountain-sun"></i>
+            <p>More events coming soon!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT ACTIVITY -->
+      <div class="card activity-card">
+        <div class="card-title">
+          <h3>Recent Activity</h3>
+        </div>
+        <div class="timeline">
+          <div class="timeline-item" *ngFor="let activity of recentActivities">
+            <div class="timeline-point" [ngClass]="activity.type.toLowerCase()"></div>
+            <div class="timeline-content">
+              <p class="act-title">{{ activity.title }}</p>
+              <p class="act-date">{{ activity.date | date:'short' }}</p>
+            </div>
+          </div>
+          <div *ngIf="recentActivities.length === 0" class="no-activity">
+            No recent activity to show.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAILS MODAL -->
+  <div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetails()">
+    <div class="details-modal" (click)="$event.stopPropagation()">
+      <div class="details-header-simple">
+        <button class="close-btn" (click)="closeDetails()">&times;</button>
+        <span class="d-category">{{ selectedEvent?.category }}</span>
+        <h2>{{ selectedEvent?.title }}</h2>
+      </div>
+      <div class="details-content">
+        <div class="d-grid">
+          <div class="d-info-item">
+            <i class="fa-regular fa-calendar"></i>
+            <div>
+              <label>Date & Time</label>
+              <p>{{ selectedEvent?.startDateTime | date:'fullDate' }} at {{ selectedEvent?.startDateTime | date:'shortTime' }}</p>
+            </div>
+          </div>
+          <div class="d-info-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>
+              <label>Venue</label>
+              <p>{{ selectedEvent?.venue || selectedEvent?.mode }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="d-description">
+          <label>Description</label>
+          <p>{{ selectedEvent?.description }}</p>
+        </div>
+        <div class="d-footer">
+          <button class="btn-primary" routerLink="/studentevent">Register for this Event</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,113 @@
+<div class="profile-container" *ngIf="admin">
+  <div class="profile-header">
+    <div class="cover-photo"></div>
+    <div class="profile-main" style="margin-top: 20px;">
+      <div class="profile-basic-info">
+        <h1>{{ admin.firstName }} {{ admin.lastName }} <i class="fa-solid fa-circle-check verified"></i></h1>
+        <p>{{ admin.role }} • {{ admin.email }}</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-primary" (click)="toggleEdit()">{{ isEditMode ? 'Cancel' : 'Edit Profile' }}</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-grid">
+    <!-- Account Summary -->
+    <div class="card summary-card">
+      <h3>Account Overview</h3>
+      <div class="summary-stats">
+        <div class="summary-item">
+          <div class="icon blue"><i class="fa-solid fa-calendar-check"></i></div>
+          <div class="val-box">
+            <span class="label">Events Created</span>
+            <span class="value">{{ stats.eventsCreated }}</span>
+          </div>
+        </div>
+        <div class="summary-item">
+          <div class="icon green"><i class="fa-solid fa-thumbs-up"></i></div>
+          <div class="val-box">
+            <span class="label">Approvals Handled</span>
+            <span class="value">{{ stats.totalApprovals }}</span>
+          </div>
+        </div>
+        <div class="summary-item">
+          <div class="icon orange"><i class="fa-solid fa-bolt"></i></div>
+          <div class="val-box">
+            <span class="label">Days Active</span>
+            <span class="value">{{ stats.daysActive }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Personal Info / Edit Form -->
+    <div class="card info-card">
+      <div class="card-header">
+        <h3>{{ isEditMode ? 'Edit Personal Information' : 'Personal Information' }}</h3>
+      </div>
+      
+      <div class="info-list" *ngIf="!isEditMode">
+        <div class="info-item">
+          <label>Full Name</label>
+          <p>{{ admin.firstName }} {{ admin.lastName }}</p>
+        </div>
+        <div class="info-item">
+          <label>Email Address</label>
+          <p>{{ admin.email }}</p>
+        </div>
+        <div class="info-item">
+          <label>Phone Number</label>
+          <p>{{ admin.phone || 'N/A' }}</p>
+        </div>
+        <div class="info-item">
+          <label>Bio</label>
+          <p>{{ admin.bio || 'No bio provided' }}</p>
+        </div>
+      </div>
+
+      <div class="edit-form" *ngIf="isEditMode">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" [(ngModel)]="editData.firstName" name="firstName" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" [(ngModel)]="editData.lastName" name="lastName" class="form-input">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="text" [(ngModel)]="editData.phone" name="phone" class="form-input">
+        </div>
+        <div class="form-group">
+          <label>Bio</label>
+          <textarea [(ngModel)]="editData.bio" name="bio" class="form-input" rows="3"></textarea>
+        </div>
+        <button class="btn-primary update-btn" (click)="updateProfile()">Update Profile</button>
+      </div>
+    </div>
+
+    <!-- Security & Settings -->
+    <div class="card settings-card">
+      <h3>Settings & Security</h3>
+      <div class="settings-list">
+        <div class="setting-item">
+          <div class="s-info">
+            <span class="s-title">Change Password</span>
+            <span class="s-desc">Last changed 2 months ago</span>
+          </div>
+          <button class="s-btn">Update</button>
+        </div>
+        <div class="setting-item">
+          <div class="s-info">
+            <span class="s-title">Email Notifications</span>
+            <span class="s-desc">Manage your alert preferences</span>
+          </div>
+          <div class="toggle"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

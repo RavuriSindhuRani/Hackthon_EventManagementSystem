@@ -1,0 +1,122 @@
+<div class="attendance-container">
+  <div class="header">
+    <h2>Attendance Management</h2>
+    <p>Monitor participation and manage check-ins for your events.</p>
+  </div>
+
+  <!-- Controls -->
+  <div class="card controls-card">
+    <div class="control-group">
+      <label>Select Event</label>
+      <select class="form-select" (change)="onEventChange($event)">
+        <option value="" disabled selected>-- Select an Event --</option>
+        <option *ngFor="let event of events" [value]="event._id">{{ event.title }}</option>
+      </select>
+    </div>
+    <div class="ms-auto">
+      <a href="/faceattendance" target="_blank" class="btn btn-primary rounded-pill px-4 text-decoration-none">
+        <i class="bi bi-camera-video me-2"></i> Launch FaceID Portal
+      </a>
+    </div>
+  </div>
+
+  <div *ngIf="selectedEvent">
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <h5>Total Registered</h5>
+        <h2>{{ stats.total }}</h2>
+      </div>
+      <div class="stat-card green">
+        <h5>Present</h5>
+        <h2>{{ stats.present }}</h2>
+      </div>
+      <div class="stat-card orange">
+        <h5>Absent</h5>
+        <h2>{{ stats.absent }}</h2>
+      </div>
+      <div class="stat-card purple">
+        <h5>Attendance Rate</h5>
+        <h2>{{ stats.percentage }}%</h2>
+      </div>
+    </div>
+
+    <!-- Attendance Table -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="mb-0 fw-bold">Participation Records</h5>
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input type="text" placeholder="Search by name..." [(ngModel)]="searchTerm">
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="attendance-table">
+          <thead>
+            <tr>
+              <th>User Details</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Check-in Method</th>
+              <th>Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let reg of filteredRegistrations">
+              <td>
+                <div class="user-info">
+                  <div class="name">{{ reg.userId?.firstName }} {{ reg.userId?.lastName }}</div>
+                  <div class="email text-muted">{{ reg.userId?.email }}</div>
+                </div>
+              </td>
+              <td>
+                <span class="badge" [ngClass]="reg.userId?.role?.toLowerCase()">{{ reg.userId?.role }}</span>
+                <div class="mt-1">
+                  <span class="badge" [ngClass]="{
+                    'bg-success': reg.status === 'APPROVED',
+                    'bg-warning text-dark': reg.status === 'PENDING',
+                    'bg-danger': reg.status === 'REJECTED'
+                  }">{{ reg.status }}</span>
+                </div>
+              </td>
+              <td>
+                <span class="status-dot" [ngClass]="reg.isPresent ? 'present' : 'absent'"></span>
+                {{ reg.isPresent ? 'Present' : 'Absent' }}
+              </td>
+              <td>
+                <span class="method-badge" *ngIf="reg.isPresent">
+                  <i class="bi" [ngClass]="reg.attendance?.attendanceMethod === 'FACE' ? 'bi-person-bounding-box' : 'bi-pencil-square'"></i>
+                  {{ reg.attendance?.attendanceMethod }}
+                </span>
+                <span *ngIf="!reg.isPresent" class="text-muted small">N/A</span>
+              </td>
+              <td>{{ (reg.attendance?.checkInTime | date:'shortTime') || '-' }}</td>
+              <td>
+                <button class="btn-mark" *ngIf="!reg.isPresent && reg.status === 'APPROVED'" (click)="markAttendance(reg)">
+                  Mark Present
+                </button>
+                <div class="text-muted small" *ngIf="!reg.isPresent && reg.status !== 'APPROVED'">
+                   Approval Required
+                </div>
+                <div class="verified-text" *ngIf="reg.isPresent">
+                  <i class="bi bi-patch-check-fill"></i> Verified
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div *ngIf="filteredRegistrations.length === 0" class="no-data">
+        No participants found matching your search.
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loader">
+    <div class="spinner"></div>
+    <p>Loading attendance data...</p>
+  </div>
+</div>

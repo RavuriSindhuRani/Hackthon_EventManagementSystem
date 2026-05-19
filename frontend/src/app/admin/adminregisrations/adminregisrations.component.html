@@ -1,0 +1,85 @@
+<div class="registration-overview">
+  <div class="header">
+    <h2><i class="fa-solid fa-clipboard-list"></i> Registrations Overview</h2>
+    <p>Monitor registration metrics and perform bulk actions for all events.</p>
+  </div>
+
+  <div *ngIf="loading" class="loader">
+    <div class="spinner"></div>
+    <p>Aggregating event data...</p>
+  </div>
+
+  <div *ngIf="!loading" class="events-grid">
+    <div class="event-stat-card" *ngFor="let event of events">
+      <div class="event-header">
+        <div class="event-info">
+          <h3>{{ event.title }}</h3>
+          <span class="badge" [ngClass]="event.status.toLowerCase()">{{ event.status }}</span>
+        </div>
+        <div class="event-date">
+          <i class="fa-regular fa-calendar"></i> {{ event.startDateTime | date:'mediumDate' }}
+        </div>
+      </div>
+
+      <div class="stats-row">
+        <!-- Students Column -->
+        <div class="stat-group student">
+          <div class="group-header">
+            <i class="fa-solid fa-user-graduate"></i> Students
+          </div>
+          <div class="numbers">
+            <div class="num-item">
+              <label>Total</label>
+              <span>{{ event.stats?.STUDENT?.total || 0 }}</span>
+            </div>
+            <div class="num-item green">
+              <label>Accepted</label>
+              <span>{{ event.stats?.STUDENT?.approved || 0 }}</span>
+            </div>
+            <div class="num-item red">
+              <label>Rejected</label>
+              <span>{{ event.stats?.STUDENT?.rejected || 0 }}</span>
+            </div>
+          </div>
+          <button class="bulk-btn" 
+                  [disabled]="event.stats?.STUDENT?.pending === 0"
+                  (click)="bulkApprove(event._id, 'STUDENT')">
+            <i class="fa-solid fa-check-double"></i> Approve Pending ({{ event.stats?.STUDENT?.pending || 0 }})
+          </button>
+        </div>
+
+        <!-- Volunteers Column -->
+        <div class="stat-group volunteer">
+          <div class="group-header">
+            <i class="fa-solid fa-handshake-angle"></i> Volunteers
+          </div>
+          <div class="numbers">
+            <div class="num-item">
+              <label>Total</label>
+              <span>{{ event.stats?.VOLUNTEER?.total || 0 }}</span>
+            </div>
+            <div class="num-item green">
+              <label>Accepted</label>
+              <span>{{ event.stats?.VOLUNTEER?.approved || 0 }}</span>
+            </div>
+            <div class="num-item red">
+              <label>Rejected</label>
+              <span>{{ event.stats?.VOLUNTEER?.rejected || 0 }}</span>
+            </div>
+          </div>
+          <button class="bulk-btn" 
+                  [disabled]="event.stats?.VOLUNTEER?.pending === 0"
+                  (click)="bulkApprove(event._id, 'VOLUNTEER')">
+            <i class="fa-solid fa-check-double"></i> Approve Pending ({{ event.stats?.VOLUNTEER?.pending || 0 }})
+          </button>
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <button class="export-btn" (click)="exportToCSV(event)">
+          <i class="fa-solid fa-file-csv"></i> Export Registrations
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

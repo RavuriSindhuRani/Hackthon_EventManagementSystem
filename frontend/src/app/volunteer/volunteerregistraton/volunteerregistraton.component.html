@@ -1,0 +1,85 @@
+<div class="registration-container">
+  <div class="header">
+    <h2>Volunteer Applications</h2>
+    <p>Track your requests to join community events as a volunteer.</p>
+  </div>
+
+  <div *ngIf="loading" class="loader">
+    <div class="spinner"></div>
+    <p>Loading your applications...</p>
+  </div>
+
+  <div *ngIf="!loading && registrations.length > 0" class="registration-list">
+    <div class="registration-card card" *ngFor="let reg of registrations">
+      <div class="card-left">
+        <div class="event-info">
+          <h3>{{ reg.eventId?.title }}</h3>
+          <p class="date"><i class="fa-regular fa-calendar"></i> {{ reg.eventId?.startDateTime | date:'fullDate' }}</p>
+          <p class="type"><i class="fa-solid fa-handshake-angle"></i> Volunteer Role</p>
+        </div>
+      </div>
+
+      <div class="status-timeline">
+        <div class="timeline-step" [class.active]="reg.status === 'PENDING' || reg.status === 'APPROVED' || reg.status === 'REJECTED' || reg.status === 'CANCELLED'">
+          <div class="dot" [ngClass]="getStatusClass(reg.status)"></div>
+          <span>Applied</span>
+        </div>
+        <div class="timeline-connector" [class.active]="reg.status === 'APPROVED' || reg.status === 'REJECTED'"></div>
+        <div class="timeline-step" [class.active]="reg.status === 'APPROVED' || reg.status === 'REJECTED'">
+          <div class="dot" [class.status-approved]="reg.status === 'APPROVED'" [class.status-rejected]="reg.status === 'REJECTED'" [class.status-cancelled]="reg.status === 'CANCELLED'"></div>
+          <span>Decision</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-outline" (click)="viewDetails(reg)">View Details</button>
+        <span *ngIf="reg.status === 'CANCELLED'" class="cancelled-tag">Cancelled</span>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && registrations.length === 0" class="no-data">
+    <i class="fa-solid fa-folder-open"></i>
+    <p>You haven't applied for any volunteer positions yet.</p>
+    <button class="btn-primary" routerLink="/volunteer/events">Browse Events</button>
+  </div>
+
+  <!-- REGISTRATION DETAILS MODAL -->
+  <div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetails()">
+    <div class="details-modal" (click)="$event.stopPropagation()">
+      <div class="details-header-simple">
+        <button class="close-btn" (click)="closeDetails()">&times;</button>
+        <span class="d-category">{{ selectedReg?.eventId?.category }}</span>
+        <h2>{{ selectedReg?.eventId?.title }}</h2>
+      </div>
+      <div class="details-content">
+        <div class="d-grid">
+          <div class="d-info-item">
+            <i class="fa-regular fa-calendar"></i>
+            <div>
+              <label>Applied On</label>
+              <p>{{ selectedReg?.appliedAt | date:'medium' }}</p>
+            </div>
+          </div>
+          <div class="d-info-item">
+            <i class="fa-solid fa-signal"></i>
+            <div>
+              <label>Status</label>
+              <p [ngClass]="getStatusClass(selectedReg?.status)">{{ selectedReg?.status | titlecase }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="d-description">
+          <label>Event Information</label>
+          <p>{{ selectedReg?.eventId?.description }}</p>
+        </div>
+        
+        <div class="d-footer" *ngIf="selectedReg?.status !== 'CANCELLED' && selectedReg?.status !== 'REJECTED'">
+          <button class="btn-cancel" (click)="cancelRegistration(selectedReg._id)">
+            <i class="fa-solid fa-ban"></i> Withdraw Application
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

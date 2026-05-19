@@ -1,0 +1,68 @@
+<div class="attendance-container">
+  <div class="header-section">
+    <div>
+      <h2>Attendance History</h2>
+      <p>Your verified presence at various community events.</p>
+    </div>
+  </div>
+
+  <!-- ATTENDANCE STATS -->
+  <div class="stats-row">
+    <div class="stat-mini-card green">
+      <div class="mini-icon"><i class="fa-solid fa-calendar-check"></i></div>
+      <div class="mini-content">
+        <h3>{{ stats.attended }}</h3>
+        <p>Events Attended</p>
+      </div>
+    </div>
+    <div class="stat-mini-card orange">
+      <div class="mini-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+      <div class="mini-content">
+        <h3>{{ stats.pending }}</h3>
+        <p>Pending Attendance</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loader">
+    <div class="spinner"></div>
+    <p>Retrieving your records...</p>
+  </div>
+
+  <div *ngIf="!loading && attendanceRecords.length > 0" class="attendance-table-card card">
+    <table class="attendance-table">
+      <thead>
+        <tr>
+          <th>Event Details</th>
+          <th>Date</th>
+          <th>Check-in Time</th>
+          <th>Method</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of attendanceRecords">
+          <td>
+            <div class="event-cell">
+              <span class="event-title">{{ record.eventId?.title }}</span>
+              <span class="event-venue">{{ record.eventId?.venue || 'Campus' }}</span>
+            </div>
+          </td>
+          <td>{{ record.checkInTime | date:'mediumDate' }}</td>
+          <td>{{ record.checkInTime | date:'shortTime' }}</td>
+          <td>
+            <span class="method-tag" [ngClass]="record.attendanceMethod.toLowerCase()">
+              {{ record.attendanceMethod }}
+            </span>
+          </td>
+          <td><span class="status-present">Present</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="!loading && attendanceRecords.length === 0" class="no-data">
+    <div class="no-data-icon"><i class="fa-solid fa-user-clock"></i></div>
+    <p>You haven't attended any events yet. Check-in at your next event!</p>
+  </div>
+</div>

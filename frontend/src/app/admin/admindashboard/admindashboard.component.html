@@ -1,0 +1,208 @@
+<!-- WELCOME -->
+<div class="welcome">
+
+  <h1>Welcome back, Admin! 👋</h1>
+
+  <p>
+    Manage events, track participants and analyze impact.
+  </p>
+
+</div>
+
+    <!-- CARDS -->
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <div class="card-icon orange">
+          <i class="fa-regular fa-calendar"></i>
+        </div>
+        <div>
+          <h5>Total Events</h5>
+          <h2>{{ stats.totalEvents }}</h2>
+          <p>↑ 12% this month</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="card-icon blue">
+          <i class="fa-solid fa-users"></i>
+        </div>
+        <div>
+          <h5>Total Registrations</h5>
+          <h2>{{ stats.totalRegistrations }}</h2>
+          <p>↑ 18% this month</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="card-icon green">
+          <i class="fa-regular fa-circle-check"></i>
+        </div>
+        <div>
+          <h5>Attendance Marked</h5>
+          <h2>{{ stats.attendanceMarked }}</h2>
+          <p>↑ 22% this month</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="card-icon purple">
+          <i class="fa-regular fa-clock"></i>
+        </div>
+        <div>
+          <h5>Volunteer Hours</h5>
+          <h2>{{ stats.volunteerHours }}</h2>
+          <p>↑ 15% this month</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="card-icon yellow">
+          <i class="fa-solid fa-user-group"></i>
+        </div>
+        <div>
+          <h5>Students Impacted</h5>
+          <h2>{{ stats.studentsImpacted }}</h2>
+          <p>↑ 17% this month</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="bottom-grid">
+
+      <!-- RECENT EVENTS -->
+      <div class="card large-card">
+
+        <div class="card-header">
+          <h3>Recent Events</h3>
+          <span routerLink="/admin/events">View All</span>
+        </div>
+
+        <div class="event" *ngFor="let event of recentEvents">
+          <div class="event-content">
+            <h4>{{ event.title }}</h4>
+            <p>{{ event.startDateTime | date:'mediumDate' }} • {{ event.venue || event.mode }}</p>
+          </div>
+          <button class="status-btn" [class]="event.status === 'COMPLETED' ? 'completed' : 'ongoing'">
+            {{ event.status === 'COMPLETED' ? 'Completed' : 'Ongoing' }}
+          </button>
+        </div>
+
+        <div *ngIf="recentEvents.length === 0" style="text-align: center; color: gray; padding: 20px;">
+          No events found.
+        </div>
+
+      </div>
+
+      <!-- REGISTRATION -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Registrations Overview</h3>
+          <span routerLink="/admin/registrations">View All</span>
+        </div>
+
+        <div class="tabs">
+          <span [class.active-tab]="selectedTab === 'students'" 
+                (click)="selectedTab = 'students'"
+                [style.padding-bottom]="selectedTab === 'students' ? '8px' : '0'"
+                [style.border-bottom]="selectedTab === 'students' ? '2px solid #ff8c1a' : 'none'"
+                [style.color]="selectedTab === 'students' ? '#ff8c1a' : 'gray'"
+                style="cursor: pointer; margin-right: 20px;">Students</span>
+          <span [class.active-tab]="selectedTab === 'volunteers'" 
+                (click)="selectedTab = 'volunteers'"
+                [style.padding-bottom]="selectedTab === 'volunteers' ? '8px' : '0'"
+                [style.border-bottom]="selectedTab === 'volunteers' ? '2px solid #ff8c1a' : 'none'"
+                [style.color]="selectedTab === 'volunteers' ? '#ff8c1a' : 'gray'"
+                style="cursor: pointer;">Volunteers</span>
+        </div>
+
+        <div class="overview-grid" style="margin-bottom: 20px;">
+          <div class="overview-tile">
+            <h6>Pending</h6>
+            <h2 class="orange-text">{{ currentRegOverview.PENDING }}</h2>
+          </div>
+          <div class="overview-tile">
+            <h6>Approved</h6>
+            <h2 class="green-text">{{ currentRegOverview.APPROVED }}</h2>
+          </div>
+          <div class="overview-tile">
+            <h6>Rejected</h6>
+            <h2 class="red-text">{{ currentRegOverview.REJECTED }}</h2>
+          </div>
+          <div class="overview-tile">
+            <h6>Total</h6>
+            <h2 class="blue-text">{{ currentRegOverview.Total }}</h2>
+          </div>
+        </div>
+
+        <!-- Recent Registrations List -->
+        <h4 style="font-size: 14px; margin-bottom: 15px; color: #0F172A;">Recent Registrations</h4>
+        
+        <div class="event" *ngFor="let reg of recentRegistrations; let last = last" [style.margin-bottom]="last ? '0' : '12px'" [style.border-bottom]="last ? 'none' : '1px solid #f1f5f9'" [style.padding-bottom]="last ? '0' : '12px'">
+          <div class="event-content" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div>
+              <h4 style="font-size: 13px; margin: 0;">{{ reg.userId?.firstName }} {{ reg.userId?.lastName }}</h4>
+              <p style="font-size: 11px; margin: 0;">{{ reg.eventId?.title }}</p>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 10px; color: gray; margin-right: 15px;">{{ reg.appliedAt | date:'shortTime' }}</span>
+              <span class="badge" 
+                    [ngStyle]="{'background': reg.status === 'APPROVED' ? '#dcfce7' : '#fff1e6', 'color': reg.status === 'APPROVED' ? '#16a34a' : '#ff8c1a'}" 
+                    style="padding: 4px 8px; border-radius: 12px; font-weight: normal; font-size: 10px; display: inline-block;">
+                {{ reg.status === 'PENDING' ? 'Pending' : 'Approved' }}
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div *ngIf="recentRegistrations.length === 0" style="text-align: center; color: gray; padding: 20px;">
+          No recent registrations.
+        </div>
+      </div>
+      
+      <!-- IMPACT OVERVIEW (Pie Chart placeholder from Image) -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Impact Overview</h3>
+          <select style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 4px 8px; font-size: 12px; outline: none; font-family: 'Poppins', sans-serif;">
+            <option>This Month</option>
+            <option>Last Month</option>
+          </select>
+        </div>
+        
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 20px;">
+          <!-- CSS Donut Chart -->
+          <div style="width: 150px; height: 150px; border-radius: 50%; background: conic-gradient(
+            #2563eb 0% 35%, 
+            #ff8c1a 35% 70%, 
+            #16a34a 70% 90%, 
+            #eab308 90% 100%
+          ); display: flex; align-items: center; justify-content: center; position: relative;">
+            <div style="width: 90px; height: 90px; background: white; border-radius: 50%;"></div>
+          </div>
+          
+          <!-- Legend -->
+          <div style="flex: 1; margin-left: 30px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 12px;">
+              <span style="display: flex; align-items: center; gap: 8px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: #2563eb;"></div> Students Impacted</span>
+              <span style="font-weight: 600;">{{ stats.studentsImpacted | number }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 12px;">
+              <span style="display: flex; align-items: center; gap: 8px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: #ff8c1a;"></div> Volunteer Hours</span>
+              <span style="font-weight: 600;">{{ stats.volunteerHours | number }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 12px;">
+              <span style="display: flex; align-items: center; gap: 8px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: #16a34a;"></div> Events Conducted</span>
+              <span style="font-weight: 600;">{{ stats.totalEvents }}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px;">
+              <span style="display: flex; align-items: center; gap: 8px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: #eab308;"></div> Attendance Rate</span>
+              <span style="font-weight: 600;">{{ stats.totalRegistrations > 0 ? (stats.attendanceMarked / stats.totalRegistrations * 100 | number:'1.0-0') : 0 }}%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>

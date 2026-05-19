@@ -1,0 +1,109 @@
+/* adminvolunteers.component.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:host {
+  --primary: #4f46e5;
+  --secondary: #10b981;
+  --accent: #f59e0b;
+  --danger: #ef4444;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --transition: all 0.3s ease;
+  font-family: 'Outfit', sans-serif;
+}
+
+.volunteer-container { padding: 10px 0; }
+
+.header { margin-bottom: 28px; }
+.header h2 { font-size: 28px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+.header p { color: var(--text-muted); font-size: 14px; }
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
+  border: 1px solid #f1f5f9;
+  margin-bottom: 24px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-header h3 { font-size: 18px; font-weight: 700; color: var(--text-main); margin: 0; }
+
+.top-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+/* VERIFICATION CENTER */
+.pending-list { display: flex; flex-direction: column; gap: 16px; }
+
+.pending-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 16px;
+  transition: var(--transition);
+}
+
+.volunteer-profile { display: flex; align-items: center; gap: 12px; }
+.volunteer-profile img { width: 44px; height: 44px; border-radius: 12px; object-fit: cover; }
+.volunteer-profile .name { font-weight: 600; color: var(--text-main); font-size: 14px; }
+.volunteer-profile .event { font-size: 12px; color: var(--text-muted); }
+
+.hour-details { text-align: center; }
+.hour-details .hours { font-size: 18px; font-weight: 700; color: var(--primary); }
+.hour-details .type { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+
+.actions { display: flex; gap: 8px; }
+.btn-approve { background: var(--secondary); color: white; border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.btn-reject { background: #fee2e2; color: var(--danger); border: none; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; }
+
+/* LEADERBOARD */
+.leaderboard-list { display: flex; flex-direction: column; gap: 12px; }
+.leader-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: #f8fafc;
+}
+
+.rank { width: 24px; font-weight: 800; color: var(--accent); font-size: 18px; }
+.leader-item img { width: 36px; height: 36px; border-radius: 50%; }
+.name-box { flex: 1; }
+.name-box .name { font-size: 13px; font-weight: 600; }
+.name-box .role { font-size: 11px; color: var(--text-muted); }
+.total-hours { font-weight: 700; color: var(--primary); font-size: 14px; }
+
+/* DIRECTORY TABLE */
+.volunteer-table { width: 100%; border-collapse: collapse; }
+.volunteer-table th { text-align: left; padding: 12px 16px; font-size: 12px; color: var(--text-muted); border-bottom: 1px solid #f1f5f9; }
+.volunteer-table td { padding: 16px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+
+.user-cell { display: flex; align-items: center; gap: 12px; }
+.user-cell img { width: 40px; height: 40px; border-radius: 12px; }
+.v-name { font-weight: 600; }
+.v-email { font-size: 12px; color: var(--text-muted); }
+
+.skills-cell { display: flex; gap: 4px; }
+.skill { font-size: 10px; background: #eff6ff; color: var(--primary); padding: 2px 6px; border-radius: 6px; }
+.hours-badge { background: #f0fdf4; color: #16a34a; font-weight: 700; padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.online { background: var(--secondary); box-shadow: 0 0 8px var(--secondary); }
+
+.no-data { text-align: center; padding: 30px; color: var(--text-muted); font-size: 13px; }
+
+@media (max-width: 1024px) { .top-row { grid-template-columns: 1fr; } }

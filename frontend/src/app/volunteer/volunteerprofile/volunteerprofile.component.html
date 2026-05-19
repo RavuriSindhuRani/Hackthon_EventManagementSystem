@@ -1,0 +1,77 @@
+<div class="profile-container">
+  <div class="header">
+    <h2>Volunteer Profile</h2>
+    <p>Manage your professional identity and track your impact.</p>
+  </div>
+
+  <div *ngIf="loading" class="loader">
+    <div class="spinner"></div>
+    <p>Loading your profile...</p>
+  </div>
+
+  <div *ngIf="!loading && user" class="profile-grid">
+    <!-- LEFT: IDENTITY CARD -->
+    <div class="card identity-card">
+      <div class="avatar-section">
+        <div class="avatar-large">
+          <img [src]="user.profileImage || 'https://ui-avatars.com/api/?name='+user.firstName+'+'+user.lastName+'&background=6366f1&color=fff'" alt="Avatar">
+        </div>
+        <h3>{{ user.firstName }} {{ user.lastName }}</h3>
+        <p class="role-tag">Volunteer Impact Maker</p>
+      </div>
+
+      <div class="impact-stats">
+        <div class="impact-item">
+          <label>Total Hours</label>
+          <p>{{ user.totalVolunteerHours || 0 }}h</p>
+        </div>
+        <div class="impact-item">
+          <label>Impact Level</label>
+          <p>Gold</p>
+        </div>
+      </div>
+
+      <div class="skills-section">
+        <label>Endorsed Skills</label>
+        <div class="skills-grid">
+          <span class="skill-tag" *ngFor="let skill of skills">{{ skill }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: DETAILS & EDIT -->
+    <div class="card details-card">
+      <div class="card-header">
+        <h3>Personal Information</h3>
+        <button class="btn-edit" (click)="toggleEdit()">
+          <i class="fa-solid" [class.fa-pencil]="!isEditing" [class.fa-times]="isEditing"></i>
+          {{ isEditing ? 'Cancel' : 'Edit Profile' }}
+        </button>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" [(ngModel)]="user.firstName" [disabled]="!isEditing">
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" [(ngModel)]="user.lastName" [disabled]="!isEditing">
+        </div>
+        <div class="form-group full-width">
+          <label>Email Address</label>
+          <input type="email" [(ngModel)]="user.email" disabled>
+          <p class="hint">Email cannot be changed after registration.</p>
+        </div>
+        <div class="form-group full-width">
+          <label>Bio / Statement of Purpose</label>
+          <textarea [(ngModel)]="user.bio" [disabled]="!isEditing" placeholder="Tell us why you volunteer..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-actions" *ngIf="isEditing">
+        <button class="btn-save" (click)="updateProfile()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>

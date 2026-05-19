@@ -1,0 +1,79 @@
+<div class="attendance-container">
+  <!-- LIVE STATUS -->
+  <div class="live-status" *ngIf="liveEvents.length > 0">
+    <div class="live-badge-row">
+      <span class="live-pulse"></span>
+      <h3>Live Event Status</h3>
+    </div>
+    <div class="live-grid">
+      <div class="live-card" *ngFor="let reg of liveEvents">
+        <div class="live-info">
+          <h4>{{ reg.eventId?.title }}</h4>
+          <p><i class="fa-solid fa-location-dot"></i> {{ reg.eventId?.venue || 'Ongoing Venue' }}</p>
+        </div>
+        <div class="live-check">
+          <span class="status-badge" [class.verified]="reg.attendanceMarked">
+            <i class="fa-solid" [class.fa-circle-check]="reg.attendanceMarked" [class.fa-clock]="!reg.attendanceMarked"></i>
+            {{ reg.attendanceMarked ? 'Attendance Verified' : 'Check-in Required' }}
+          </span>
+          <button *ngIf="!reg.attendanceMarked" class="btn-checkin" routerLink="/faceattendance">Open FaceID</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="header">
+    <h2>Verified Records</h2>
+    <p>Verification of your presence and contributions at past events.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card success">
+      <div class="icon"><i class="fa-solid fa-calendar-check"></i></div>
+      <div class="content">
+        <h3>{{ stats.attended }}</h3>
+        <p>Verified Attendances</p>
+      </div>
+    </div>
+    <div class="stat-card warning">
+      <div class="icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+      <div class="content">
+        <h3>{{ stats.pending }}</h3>
+        <p>Pending Check-ins</p>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loader">
+    <div class="spinner"></div>
+    <p>Loading your records...</p>
+  </div>
+
+  <!-- LIST -->
+  <div *ngIf="!loading && attendanceRecords.length > 0" class="attendance-list">
+    <div class="attendance-card card" *ngFor="let record of attendanceRecords">
+      <div class="card-body">
+        <div class="event-meta">
+          <h3>{{ record.eventId?.title }}</h3>
+          <span class="venue"><i class="fa-solid fa-location-dot"></i> {{ record.eventId?.venue || 'Event Venue' }}</span>
+        </div>
+        <div class="time-meta">
+          <div class="time-box">
+            <label>Check In</label>
+            <p>{{ record.checkInTime | date:'medium' }}</p>
+          </div>
+          <div class="verified-badge">
+            <i class="fa-solid fa-circle-check"></i> Verified
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && attendanceRecords.length === 0" class="no-data">
+    <i class="fa-solid fa-clipboard-user"></i>
+    <p>No attendance records found yet. Make sure to get verified at your events!</p>
+    <button class="btn-primary" routerLink="/volunteer/dashboard">Go to Dashboard</button>
+  </div>
+</div>

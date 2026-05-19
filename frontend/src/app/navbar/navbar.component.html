@@ -1,0 +1,89 @@
+<div class="dashboard-container">
+  <div class="sidebar">
+
+  <div class="logo-section">
+    <h2>EventZen</h2>
+    <p>{{ userRole === 'ADMIN' || userRole === 'ORGANIZER' ? 'Admin Portal' : (userRole === 'VOLUNTEER' ? 'Volunteer Portal' : 'Student Portal') }}</p>
+  </div>
+
+  <!-- Student Links -->
+  <ul *ngIf="userRole !== 'ADMIN' && userRole !== 'ORGANIZER' && userRole !== 'VOLUNTEER'">
+    <li routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      Dashboard
+    </li>
+    <li routerLink="/studentevent" routerLinkActive="active">
+      Browse Events
+    </li>
+    <li routerLink="/registration" routerLinkActive="active">
+      My Registrations
+    </li>
+    <li routerLink="/attendance" routerLinkActive="active">
+      Attendance
+    </li>
+    <li routerLink="profile" routerLinkActive="active">
+      Profile
+    </li>
+    <li (click)="logout()" style="margin-top: 20px; color: #f87171;">
+      Logout
+    </li>
+  </ul>
+
+  <!-- Admin Links -->
+  <ul *ngIf="userRole === 'ADMIN' || userRole === 'ORGANIZER'">
+    <li routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      Dashboard
+    </li>
+    <li routerLink="/admin/events" routerLinkActive="active">
+      Manage Events
+    </li>
+    <li routerLink="/admin/registrations" routerLinkActive="active">
+      Registrations Overview
+    </li>
+    <li routerLink="/admin/attendance" routerLinkActive="active">
+      System Attendance
+    </li>
+    <li routerLink="/admin/students" routerLinkActive="active">
+      students
+    </li>
+    <li routerLink="/admin/volunteers" routerLinkActive="active">
+      volunteers
+    </li>
+    <li routerLink="/admin/profile" routerLinkActive="active">
+      profile
+    </li>
+    <li (click)="logout()" style="margin-top: 20px; color: #f87171;">
+      Logout
+    </li>
+  </ul>
+
+  <!-- Volunteer Links -->
+  <ul *ngIf="userRole === 'VOLUNTEER'">
+    <li routerLink="/volunteer/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+      Dashboard
+    </li>
+    <li routerLink="/volunteer/events" routerLinkActive="active">
+      My Events
+    </li>
+    <li routerLink="/volunteer/attendance" routerLinkActive="active">
+      Attendance
+    </li>
+    <li routerLink="/volunteer/myhours" routerLinkActive="active">
+      My Hours
+    </li>
+    <li routerLink="/volunteer/student" routerLinkActive="active">
+      My Students
+    </li>
+    <li routerLink="/volunteer/profile" routerLinkActive="active">
+      Profile
+    </li>
+    <li (click)="logout()" style="margin-top: 20px; color: #f87171;">
+      Logout
+    </li>
+  </ul>
+</div>
+  <div class="main-content">
+    <div class="content-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,96 @@
+<div class="volunteer-container">
+  <div class="header">
+    <h2><i class="fa-solid fa-handshake-angle"></i> Volunteer Management</h2>
+    <p>Verify contribution hours and manage the volunteer community.</p>
+  </div>
+
+  <div class="top-row">
+    <!-- Verification Center -->
+    <div class="verification-center card">
+      <div class="card-header">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Hour Verification Center</h3>
+        <span class="badge pending">{{ pendingHours.length }} Pending</span>
+      </div>
+
+      <div class="pending-list">
+        <div class="pending-item" *ngFor="let record of pendingHours">
+          <div class="volunteer-profile">
+            <div class="details">
+              <div class="name">{{ record.volunteerId?.firstName }} {{ record.volunteerId?.lastName }}</div>
+              <div class="event">{{ record.eventId?.title }}</div>
+            </div>
+          </div>
+          
+          <div class="hour-details">
+            <div class="hours">{{ record.hoursContributed }}h</div>
+            <div class="type">{{ record.activityType }}</div>
+          </div>
+
+          <div class="actions">
+            <button class="btn-approve" (click)="approveHours(record._id)">Approve</button>
+            <button class="btn-reject" (click)="rejectHours(record._id)">Reject</button>
+          </div>
+        </div>
+        <div *ngIf="pendingHours.length === 0" class="no-data">
+          All hours have been verified!
+        </div>
+      </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="leaderboard card">
+      <div class="card-header">
+        <h3><i class="fa-solid fa-trophy"></i> Top Contributors</h3>
+      </div>
+      <div class="leaderboard-list">
+        <div class="leader-item" *ngFor="let v of volunteers | slice:0:5; let i = index">
+          <div class="rank">{{ i + 1 }}</div>
+          <div class="name-box">
+            <div class="name">{{ v.firstName }} {{ v.lastName }}</div>
+            <div class="role">Volunteer</div>
+          </div>
+          <div class="total-hours">{{ v.totalVolunteerHours || 0 }}h</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All Volunteers Table -->
+  <div class="all-volunteers card">
+    <div class="card-header">
+      <h3>Volunteer Directory</h3>
+    </div>
+    <table class="volunteer-table">
+      <thead>
+        <tr>
+          <th>Volunteer</th>
+          <th>Skills</th>
+          <th>Events</th>
+          <th>Total Hours</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let v of volunteers">
+          <td>
+            <div class="user-cell">
+              <div>
+                <div class="v-name">{{ v.firstName }} {{ v.lastName }}</div>
+                <div class="v-email">{{ v.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="skills-cell">
+              <span class="skill" *ngFor="let s of v.skills | slice:0:2">{{ s }}</span>
+              <span class="skill-more" *ngIf="v.skills?.length > 2">+{{ v.skills.length - 2 }}</span>
+            </div>
+          </td>
+          <td>{{ v.participationCount }}</td>
+          <td><span class="hours-badge">{{ v.totalVolunteerHours || 0 }} hours</span></td>
+          <td><span class="status-dot online"></span> Active</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

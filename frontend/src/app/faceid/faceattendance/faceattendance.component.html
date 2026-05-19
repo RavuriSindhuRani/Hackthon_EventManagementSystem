@@ -1,0 +1,106 @@
+<div class="face-id-page">
+  <div class="navbar-simple">
+    <div class="container d-flex justify-content-between align-items-center h-100">
+      <h4 class="mb-0 fw-bold"><i class="bi bi-shield-lock-fill me-2"></i>VEMS FaceID Portal</h4>
+      <button class="btn btn-outline-light btn-sm rounded-pill" routerLink="/admin/attendance">
+        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+      </button>
+    </div>
+  </div>
+
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-7">
+        
+        <!-- Header -->
+        <div class="text-center mb-4">
+          <h2 class="fw-bold text-dark">Face Attendance Scan</h2>
+          <p class="text-muted">High-precision facial recognition for event check-in</p>
+        </div>
+
+        <!-- Event Selection -->
+        <div class="card event-select-card mb-4 border-0 shadow-sm rounded-4">
+          <div class="card-body p-4">
+            <label class="form-label fw-bold mb-3">Target Event for Attendance</label>
+            <select class="form-select form-select-lg rounded-pill" [(ngModel)]="selectedEventId">
+              <option value="AUTO_DETECT">✨ Auto-Detect (Ongoing Events)</option>
+              <option *ngFor="let event of events" [value]="event._id">{{ event.title }}</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Scanner Card -->
+        <div class="card scanner-card border-0 shadow-lg rounded-4 overflow-hidden" *ngIf="!recognizedUser && !message">
+          <div class="camera-container">
+            <webcam
+              [trigger]="triggerObservable"
+              (imageCapture)="handleImage($event)"
+              [width]="640"
+              [height]="480"
+              [videoOptions]="{ facingMode: 'user' }">
+            </webcam>
+            <div class="scan-overlay" *ngIf="!isProcessing">
+              <div class="scan-frame"></div>
+              <div class="scan-line"></div>
+            </div>
+            <!-- Processing Overlay -->
+            <div class="processing-overlay" *ngIf="isProcessing">
+              <div class="spinner-border text-primary" style="width: 4rem; height: 4rem;"></div>
+              <h4 class="mt-3 text-white fw-bold">Analyzing Face...</h4>
+            </div>
+          </div>
+          <div class="card-footer p-4 text-center bg-dark border-0">
+            <button class="btn btn-primary btn-xl rounded-pill px-5 shadow w-100" 
+                    (click)="captureFace()" [disabled]="isProcessing || !selectedEventId">
+              <span *ngIf="!isProcessing"><i class="bi bi-record-circle me-2"></i>Mark Attendance</span>
+              <span *ngIf="isProcessing" class="spinner-border spinner-border-sm me-2"></span>
+              <span *ngIf="isProcessing">Processing Face...</span>
+            </button>
+            <p *ngIf="!selectedEventId" class="text-warning small mt-2">Please select an event first</p>
+          </div>
+        </div>
+
+        <!-- Result Card -->
+        <div class="card result-card border-0 shadow-lg rounded-4 overflow-hidden animate-in" 
+             *ngIf="!isProcessing && (recognizedUser || (message && !recognizedUser))">
+          <div class="card-body p-5 text-center">
+            
+            <div *ngIf="recognizedUser">
+              <div class="status-icon mb-4">
+                <i class="bi" 
+                   [ngClass]="attendanceMarked ? 'bi-check-circle-fill text-success' : 'bi-info-circle-fill text-info'" 
+                   style="font-size: 5rem;"></i>
+              </div>
+              <h1 class="fw-bold mb-1">{{ recognizedUser.firstName }} {{ recognizedUser.lastName }}</h1>
+              <div class="badge-row mb-4">
+                <span class="badge bg-success rounded-pill px-3">{{ recognizedUser.role }}</span>
+                <span class="badge bg-primary rounded-pill px-3 ms-2">Verified via FaceID</span>
+              </div>
+              <div class="alert border-0 rounded-4" [ngClass]="attendanceMarked ? 'alert-success' : 'alert-info'">
+                <i class="bi me-2" [ngClass]="attendanceMarked ? 'bi-calendar-check-fill' : 'bi-info-circle-fill'"></i> 
+                {{ message }}
+              </div>
+              <button class="btn btn-outline-primary rounded-pill px-5 mt-4" (click)="reset()">
+                Scan Next Person
+              </button>
+            </div>
+
+            <div *ngIf="!recognizedUser && message">
+              <div class="failure-preview mb-4" *ngIf="previewImage">
+                <img [src]="previewImage" class="img-fluid rounded-4 shadow-sm" style="max-height: 200px; border: 3px solid #ef4444;">
+              </div>
+              <i class="bi bi-exclamation-triangle-fill display-1 text-danger mb-4"></i>
+              <h2 class="fw-bold text-danger">Verification Failed</h2>
+              <p class="text-muted mb-4 fs-5">{{ message }}</p>
+              <button class="btn btn-danger rounded-pill px-5" (click)="reset()">
+                Try Again
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

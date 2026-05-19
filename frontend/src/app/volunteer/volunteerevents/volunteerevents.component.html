@@ -1,0 +1,153 @@
+<div class="events-container">
+  <!-- HEADER -->
+  <div class="search-header">
+    <div class="welcome">
+      <h2>Volunteer Opportunities</h2>
+      <p>Find events that need your skills and time.</p>
+    </div>
+    <div class="action-bar">
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" [(ngModel)]="searchTerm" (input)="filterEvents()" placeholder="Search events...">
+      </div>
+      <select class="category-select" [(ngModel)]="categoryFilter" (change)="filterEvents()">
+        <option value="ALL">All Categories</option>
+        <option value="WORKSHOP">Workshops</option>
+        <option value="MOCK_INTERVIEW">Mock Interviews</option>
+        <option value="HACKATHON">Hackathons</option>
+        <option value="MENTORING">Mentoring</option>
+        <option value="SEMINAR">Seminars</option>
+        <option value="BOOTCAMP">Bootcamps</option>
+        <option value="NETWORKING">Networking</option>
+        <option value="COMPETITION">Competitions</option>
+        <option value="COMMUNITY">Community</option>
+        <option value="SOCIAL">Social</option>
+        <option value="CULTURAL">Cultural</option>
+        <option value="SPORTS">Sports</option>
+        <option value="TECHNICAL">Technical</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loader">
+    <div class="spinner"></div>
+    <p>Loading opportunities...</p>
+  </div>
+
+  <!-- EVENT GRID -->
+  <div *ngIf="!loading" class="event-grid">
+    <div class="event-card" *ngFor="let event of filteredEvents" (click)="viewDetails(event)">
+      <!-- Image removed as per request -->
+      <!-- <div class="event-image">
+        <img [src]="event.eventBanner || 'https://images.unsplash.com/photo-1517245327032-9792fca2a973?auto=format&fit=crop&w=800&q=80'" alt="Banner">
+        <div class="status-overlay" *ngIf="event.status === 'REGISTRATION_CLOSED'">Closed</div>
+      </div> -->
+      <div class="event-body">
+        <div class="card-header-top">
+          <span class="category-badge">{{ event.category || 'General' }}</span>
+          <h3 class="event-title">{{ event.title }}</h3>
+        </div>
+        <p class="event-desc">{{ event.description | slice:0:100 }}...</p>
+        
+        <div class="event-details">
+          <span><i class="fa-regular fa-calendar"></i> {{ event.startDateTime | date:'MMM d, y' }}</span>
+          <span><i class="fa-solid fa-location-dot"></i> {{ event.venue || 'Online' }}</span>
+        </div>
+
+        <!-- <div class="volunteer-slots" *ngIf="event.volunteerRequiredCount">
+          <div class="slot-header">
+            <span>Volunteer Slots</span>
+            <span>{{ event.volunteerAssignedCount || 0 }}/{{ event.volunteerRequiredCount }}</span>
+          </div>
+          <div class="slot-bar">
+            <div class="fill" [style.width.%]="(event.volunteerAssignedCount / event.volunteerRequiredCount) * 100"></div>
+          </div>
+        </div> -->
+      </div>
+      <div class="event-footer">
+        <button class="btn-apply" (click)="$event.stopPropagation(); openRegistrationModal(event._id)">
+          Apply to Volunteer <i class="fa-solid fa-hand-holding-heart"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAILS MODAL -->
+  <div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetails()">
+    <div class="details-modal" (click)="$event.stopPropagation()">
+      <div class="details-header-simple">
+        <button class="close-btn" (click)="closeDetails()">&times;</button>
+        <span class="d-category">{{ selectedEvent?.category }}</span>
+        <h2>{{ selectedEvent?.title }}</h2>
+      </div>
+      <div class="details-content">
+        <div class="d-grid">
+          <div class="d-info-item">
+            <i class="fa-regular fa-calendar"></i>
+            <div>
+              <label>Date & Time</label>
+              <p>{{ selectedEvent?.startDateTime | date:'fullDate' }}</p>
+            </div>
+          </div>
+          <div class="d-info-item">
+            <i class="fa-solid fa-location-dot"></i>
+            <div>
+              <label>Venue</label>
+              <p>{{ selectedEvent?.venue || selectedEvent?.mode }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="d-description">
+          <label>Description</label>
+          <p>{{ selectedEvent?.description }}</p>
+        </div>
+        <div class="d-footer">
+          <button class="btn-primary" (click)="closeDetails(); openRegistrationModal(selectedEvent._id, selectedEvent.volunteerRequiredCount, selectedEvent.volunteerAssignedCount)">Apply Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTRATION POPUP (WEBCAM) -->
+  <div class="modal-overlay" *ngIf="showRegistrationModal">
+    <div class="modal-card">
+      <h3>Volunteer Verification</h3>
+      <p>Please capture a live photo to verify your identity for volunteering.</p>
+      
+      <div class="webcam-container">
+        <webcam 
+          [trigger]="triggerObservable" 
+          (imageCapture)="handleImage($event)" 
+          [imageQuality]="1" 
+          [videoOptions]="{ facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }"
+          [allowCameraSwitch]="true">
+        </webcam>
+        <div class="capture-overlay" *ngIf="webcamImage">
+          <img [src]="webcamImage.imageAsDataUrl" alt="Capture">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeModal()" [disabled]="isRegistering">Cancel</button>
+        <button class="btn-capture" (click)="capture()" [disabled]="isRegistering">
+          <i class="fa-solid fa-camera"></i> {{ webcamImage ? 'Retake' : 'Capture' }}
+        </button>
+        <button class="btn-primary" (click)="registerVolunteer()" [disabled]="!webcamImage || isRegistering">
+          {{ isRegistering ? 'Applying...' : 'Complete Application' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT POPUP -->
+  <div class="modal-overlay" *ngIf="showResultPopup" (click)="closeResultPopup()">
+    <div class="result-popup" (click)="$event.stopPropagation()">
+      <div class="result-icon" [class.success]="regStatus === 'SUCCESS'" [class.error]="regStatus === 'ERROR'">
+        <i class="fa-solid" [class.fa-check]="regStatus === 'SUCCESS'" [class.fa-xmark]="regStatus === 'ERROR'"></i>
+      </div>
+      <h3>{{ regStatus === 'SUCCESS' ? 'Application Submitted!' : 'Submission Failed' }}</h3>
+      <p>{{ regStatus === 'SUCCESS' ? 'Your volunteer application for ' + (selectedEvent?.title || 'the event') + ' is pending approval.' : 'Something went wrong. Please try again.' }}</p>
+      <button class="btn-primary" (click)="closeResultPopup()">Understood</button>
+    </div>
+  </div>
+</div>

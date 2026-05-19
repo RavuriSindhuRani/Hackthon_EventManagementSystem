@@ -1,0 +1,97 @@
+<div class="volunteer-student-container">
+  <!-- Header -->
+  <div class="header">
+    <div class="title-group">
+      <button *ngIf="selectedEvent" class="back-btn" (click)="goBack()">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+      <h2>{{ selectedEvent ? selectedEvent.title : 'My Assigned Students' }}</h2>
+    </div>
+    <p class="subtitle">
+      {{ selectedEvent ? 'Manage attendance for registered students.' : 'Select an event to view registered students and mark attendance.' }}
+    </p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loader-overlay">
+    <div class="spinner"></div>
+    <p>Loading details...</p>
+  </div>
+
+  <!-- Event Selection View -->
+  <div *ngIf="!selectedEvent && !isLoading" class="event-selection-grid">
+    <div *ngIf="volunteerEvents.length === 0" class="empty-state">
+      <i class="fa-solid fa-calendar-xmark"></i>
+      <h3>No assigned events</h3>
+      <p>You haven't been approved as a volunteer for any active events yet.</p>
+    </div>
+
+    <div class="event-card" *ngFor="let event of volunteerEvents" (click)="onSelectEvent(event)">
+      <div class="card-content">
+        <span class="category-tag">{{ event.category }}</span>
+        <h3>{{ event.title }}</h3>
+        <div class="meta-info">
+          <span><i class="fa-regular fa-calendar"></i> {{ event.startDateTime | date:'MMM d, y' }}</span>
+          <span><i class="fa-solid fa-location-dot"></i> {{ event.venue || 'Online' }}</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span>View Students <i class="fa-solid fa-chevron-right"></i></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Student List View -->
+  <div *ngIf="selectedEvent && !isLoading" class="student-list-view">
+    <div *ngIf="registeredStudents.length === 0" class="empty-state">
+      <i class="fa-solid fa-users-slash"></i>
+      <h3>No students registered</h3>
+      <p>No students have registered for this event yet.</p>
+    </div>
+
+    <div *ngIf="registeredStudents.length > 0" class="student-table-container">
+      <table class="student-table">
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Attendance</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let reg of registeredStudents">
+            <td>
+              <div class="user-info">
+                <!-- <img [src]="reg.userId.profileImage || 'assets/default-avatar.png'" alt="Profile"> -->
+                <span>{{ reg.userId.firstName }} {{ reg.userId.lastName }}</span>
+              </div>
+            </td>
+            <td>{{ reg.userId.email }}</td>
+            <td>
+              <span class="status-badge" [class.approved]="reg.status === 'APPROVED'">
+                {{ reg.status }}
+              </span>
+            </td>
+            <td>
+              <span class="attendance-status" [class.marked]="reg.attendanceMarked">
+                {{ reg.attendanceMarked ? 'Present' : 'Absent' }}
+              </span>
+            </td>
+            <td>
+              <button 
+                class="mark-btn" 
+                [disabled]="reg.attendanceMarked || isMarking"
+                (click)="markAttendance(reg)"
+                [class.marked]="reg.attendanceMarked">
+                <i class="fa-solid" [class.fa-check]="reg.attendanceMarked" [class.fa-user-check]="!reg.attendanceMarked"></i>
+                {{ reg.attendanceMarked ? 'Marked' : 'Mark Present' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

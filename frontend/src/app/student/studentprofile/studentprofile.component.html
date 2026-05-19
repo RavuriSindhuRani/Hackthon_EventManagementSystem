@@ -1,0 +1,95 @@
+<div class="profile-container" *ngIf="!loading && student">
+  <!-- PROFILE HEADER -->
+  <div class="profile-header card">
+    <div class="header-main">
+      <div class="info-group">
+        <h1>{{ student.firstName }} {{ student.lastName }} <span class="badge verified">Student</span></h1>
+        <p class="email"><i class="fa-regular fa-envelope"></i> {{ student.email }}</p>
+        <p class="role"><i class="fa-solid fa-graduation-cap"></i> Academic Level: Graduate</p>
+      </div>
+      <button class="btn-edit" (click)="toggleEdit()">
+        {{ isEditMode ? 'Cancel' : 'Edit Profile' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="profile-grid">
+    <!-- LEFT COLUMN: STATS & SKILLS -->
+    <div class="left-col">
+      <!-- BEST FEATURE: Personal Impact Stats -->
+      <div class="card stat-card">
+        <h3>Learning Impact</h3>
+        <div class="mini-stats">
+          <div class="m-stat">
+            <span class="m-val">{{ student.participationCount }}</span>
+            <span class="m-lab">Events</span>
+          </div>
+          <div class="m-stat">
+            <span class="m-val">{{ student.participationCount * 5 }}</span>
+            <span class="m-lab">XP Points</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BEST FEATURE: Skill Cloud -->
+      <div class="card skill-card">
+        <h3>Skills Acquired</h3>
+        <div class="skill-cloud">
+          <span class="skill-tag" *ngFor="let skill of student.skills">{{ skill }}</span>
+          <span *ngIf="!student.skills?.length" class="no-skills">Participate in events to gain skills!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: INFO / EDIT -->
+    <div class="right-col">
+      <div class="card content-card">
+        <h3 class="card-title">{{ isEditMode ? 'Update Profile' : 'Personal Information' }}</h3>
+        
+        <div class="info-view" *ngIf="!isEditMode">
+          <div class="info-item">
+            <label>Biography</label>
+            <p>{{ student.bio || 'Passionate student learner participating in VEMS community events.' }}</p>
+          </div>
+          <div class="info-item">
+            <label>Phone Number</label>
+            <p>{{ student.phone || 'Not provided' }}</p>
+          </div>
+          <div class="info-item">
+            <label>Interests</label>
+            <div class="interests-list">
+              <span class="interest-tag" *ngFor="let interest of student.interests">{{ interest }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="edit-form" *ngIf="isEditMode">
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" [(ngModel)]="editData.firstName" class="form-input">
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" [(ngModel)]="editData.lastName" class="form-input">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="text" [(ngModel)]="editData.phone" class="form-input">
+          </div>
+          <div class="form-group">
+            <label>Biography</label>
+            <textarea [(ngModel)]="editData.bio" class="form-input" rows="4"></textarea>
+          </div>
+          <button class="btn-primary" (click)="updateProfile()">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="loader">
+  <div class="spinner"></div>
+  <p>Loading your profile...</p>
+</div>

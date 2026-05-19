@@ -1,0 +1,490 @@
+<div class="container py-5">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+      <h2 class="fw-bold mb-1">
+        <i class="bi bi-calendar-event-fill text-primary me-2"></i>
+        Event Management
+      </h2>
+
+      <p class="text-muted mb-0">
+        Create, manage, publish, and monitor all events.
+      </p>
+    </div>
+
+    <button
+      class="btn btn-primary fw-bold shadow-sm px-4 rounded-pill"
+      (click)="isAddMode = true"
+      *ngIf="!isAddMode">
+
+      <i class="bi bi-plus-lg me-1"></i>
+      Add New Event
+    </button>
+
+  </div>
+
+  <!-- Event Form -->
+  <div
+    class="card mb-5 shadow rounded-4 border-0"
+    *ngIf="isAddMode">
+
+    <!-- Card Header -->
+    <div class="card-header bg-dark text-white p-4 border-0">
+
+      <h5 class="mb-0 fw-bold">
+        <i class="bi bi-calendar2-plus me-2"></i>
+        Create Event
+      </h5>
+
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body p-4 bg-light">
+
+      <form
+        [formGroup]="eventForm"
+        (ngSubmit)="saveEvent()">
+
+        <!-- Event Details -->
+        <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">
+          Event Details
+        </h6>
+
+        <div class="row g-3 mb-4">
+          <div class="col-md-12">
+            <label class="fw-bold mb-2">Event Title</label>
+            <input type="text" class="form-control" formControlName="title" placeholder="Enter a catchy title">
+            <div class="text-danger mt-1 small" *ngIf="eventForm.get('title')?.touched && eventForm.get('title')?.invalid">
+              Title is required
+            </div>
+          </div>
+
+          <div class="col-md-12">
+            <label class="fw-bold mb-2">Description</label>
+            <textarea rows="4" class="form-control" formControlName="description" placeholder="What is this event about?"></textarea>
+          </div>
+
+          <div class="col-md-6">
+            <label class="fw-bold mb-2">Category</label>
+            <select class="form-select" formControlName="category">
+              <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label class="fw-bold mb-2">Event Mode</label>
+            <select class="form-select" formControlName="mode">
+              <option value="">Select Mode</option>
+              <option value="ONLINE">Online</option>
+              <option value="OFFLINE">Offline</option>
+              <option value="HYBRID">Hybrid</option>
+            </select>
+            <div class="text-danger mt-1 small" *ngIf="eventForm.get('mode')?.touched && eventForm.get('mode')?.invalid">
+              Mode is required
+            </div>
+          </div>
+        </div>
+
+        <!-- Volunteer Requirements -->
+        <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">
+          Volunteer Requirements
+        </h6>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <label class="fw-bold mb-2">Volunteer Slots Needed</label>
+            <input type="number" class="form-control" formControlName="volunteerRequiredCount" min="0">
+            <small class="text-muted">How many volunteers do you need for this event?</small>
+          </div>
+        </div>
+
+        <!-- Venue Section -->
+        <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">
+          Venue & Meeting Details
+        </h6>
+
+        <div class="row g-3 mb-4">
+
+          <!-- Venue -->
+          <div
+            class="col-md-6"
+            *ngIf="eventForm.get('mode')?.value !== 'ONLINE'">
+
+            <label class="fw-bold mb-2">
+              Venue
+            </label>
+
+            <input
+              type="text"
+              class="form-control"
+              formControlName="venue">
+
+          </div>
+
+          <!-- Meeting Link -->
+          <div
+            class="col-md-6"
+            *ngIf="eventForm.get('mode')?.value !== 'OFFLINE'">
+
+            <label class="fw-bold mb-2">
+              Meeting Link
+            </label>
+
+            <input
+              type="url"
+              class="form-control"
+              formControlName="meetingLink"
+              placeholder="https://meet.google.com/...">
+
+          </div>
+
+        </div>
+
+        <!-- Date Section -->
+        <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">
+          Scheduling & Capacity
+        </h6>
+
+        <div class="row g-3 mb-4">
+
+          <!-- Start -->
+          <div class="col-md-4">
+
+            <label class="fw-bold mb-2">
+              Start Date & Time
+            </label>
+
+            <input
+              type="datetime-local"
+              class="form-control"
+              formControlName="startDateTime">
+
+          </div>
+
+          <!-- End -->
+          <div class="col-md-4">
+
+            <label class="fw-bold mb-2">
+              End Date & Time
+            </label>
+
+            <input
+              type="datetime-local"
+              class="form-control"
+              formControlName="endDateTime">
+
+          </div>
+
+          <!-- Capacity -->
+          <div class="col-md-4">
+
+            <label class="fw-bold mb-2">
+              Capacity
+            </label>
+
+            <input
+              type="number"
+              class="form-control"
+              formControlName="capacity"
+              min="1">
+
+            <div
+              class="text-danger mt-1 small"
+              *ngIf="
+                eventForm.get('capacity')?.touched &&
+                eventForm.get('capacity')?.invalid
+              ">
+
+              Capacity must be greater than 0
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Footer Buttons -->
+        <div class="mt-4 pt-3 border-top text-end">
+
+          <button
+            type="button"
+            class="btn btn-outline-secondary px-4 me-2 rounded-pill"
+            (click)="isAddMode = false">
+
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            class="btn btn-success px-4 rounded-pill shadow-sm fw-bold"
+            [disabled]="eventForm.invalid">
+
+            <i class="bi bi-save me-1"></i>
+            Save Event
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- REGISTRATIONS MANAGEMENT VIEW -->
+  <div class="card mb-5 shadow rounded-4 border-0" *ngIf="isRegistrationsMode && selectedEvent">
+    
+    <div class="card-header bg-dark text-white p-4 border-0 d-flex justify-content-between align-items-center">
+      <div>
+        <h5 class="mb-1 fw-bold"><i class="bi bi-people-fill me-2"></i>Registrations for {{ selectedEvent.title }}</h5>
+        <small class="text-white-50">Manage approvals for students and volunteers</small>
+      </div>
+      <button class="btn btn-sm btn-light rounded-pill" (click)="closeRegistrations()">
+        <i class="bi bi-arrow-left me-1"></i> Back to Events
+      </button>
+    </div>
+
+    <div class="card-body p-4 bg-light">
+      <div *ngIf="loadingRegs" class="text-center p-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!loadingRegs" class="row">
+        
+        <!-- STUDENTS SECTION -->
+        <div class="col-md-6 mb-4">
+          <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">
+            <i class="bi bi-mortarboard-fill me-2"></i> Registered Students ({{ eventStudents.length }})
+          </h6>
+          
+          <div *ngIf="eventStudents.length === 0" class="text-muted small p-3 text-center border rounded bg-white">
+            No students registered yet.
+          </div>
+
+          <div class="registration-card p-3 mb-2 bg-white border rounded shadow-sm d-flex align-items-center" *ngFor="let reg of eventStudents">
+            <img [src]="reg.userId?.profileImage || 'https://i.pravatar.cc/150?img=12'" class="rounded-circle me-3" style="width: 45px; height: 45px; object-fit: cover;">
+            <div class="flex-grow-1">
+              <h6 class="mb-0 fw-bold">{{ reg.userId?.firstName }} {{ reg.userId?.lastName }}</h6>
+              <small class="text-muted">Applied: {{ reg.appliedAt | date:'mediumDate' }}</small>
+              <div class="mt-1">
+                <span class="badge" 
+                      [ngClass]="{'bg-warning text-dark': reg.status === 'PENDING', 'bg-success': reg.status === 'APPROVED', 'bg-danger': reg.status === 'REJECTED'}">
+                  {{ reg.status }}
+                </span>
+              </div>
+            </div>
+            <div class="d-flex flex-column gap-2" *ngIf="reg.status === 'PENDING'">
+              <button class="btn btn-sm btn-success rounded-pill" (click)="approveRegistration(reg._id, 'STUDENT')"><i class="bi bi-check2"></i> Approve</button>
+              <button class="btn btn-sm btn-outline-danger rounded-pill" (click)="rejectRegistration(reg._id, 'STUDENT')"><i class="bi bi-x"></i> Reject</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VOLUNTEERS SECTION -->
+        <div class="col-md-6 mb-4">
+          <h6 class="fw-bold text-warning mb-3 border-bottom pb-2">
+            <i class="bi bi-person-hearts me-2"></i> Registered Volunteers ({{ eventVolunteers.length }})
+          </h6>
+          
+          <div *ngIf="eventVolunteers.length === 0" class="text-muted small p-3 text-center border rounded bg-white">
+            No volunteers registered yet.
+          </div>
+
+          <div class="registration-card p-3 mb-2 bg-white border rounded shadow-sm d-flex align-items-center" *ngFor="let reg of eventVolunteers">
+            <img [src]="reg.userId?.profileImage || 'https://i.pravatar.cc/150?img=5'" class="rounded-circle me-3" style="width: 45px; height: 45px; object-fit: cover;">
+            <div class="flex-grow-1">
+              <h6 class="mb-0 fw-bold">{{ reg.userId?.firstName }} {{ reg.userId?.lastName }}</h6>
+              <small class="text-muted">Applied: {{ reg.appliedAt | date:'mediumDate' }}</small>
+              <div class="mt-1">
+                <span class="badge" 
+                      [ngClass]="{'bg-warning text-dark': reg.status === 'PENDING', 'bg-success': reg.status === 'APPROVED', 'bg-danger': reg.status === 'REJECTED'}">
+                  {{ reg.status }}
+                </span>
+              </div>
+            </div>
+            <div class="d-flex flex-column gap-2" *ngIf="reg.status === 'PENDING'">
+              <button class="btn btn-sm btn-success rounded-pill" (click)="approveRegistration(reg._id, 'VOLUNTEER')"><i class="bi bi-check2"></i> Approve</button>
+              <button class="btn btn-sm btn-outline-danger rounded-pill" (click)="rejectRegistration(reg._id, 'VOLUNTEER')"><i class="bi bi-x"></i> Reject</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Events Table -->
+  <div
+    class="card shadow rounded-4 border-0"
+    *ngIf="!isAddMode && !isRegistrationsMode">
+
+    <div class="card-body p-0">
+
+      <div class="table-responsive">
+
+        <table class="table table-hover align-middle mb-0">
+
+          <!-- Table Head -->
+          <thead class="table-light">
+
+            <tr>
+
+              <th class="ps-4 py-3 text-muted fw-bold">
+                Event
+              </th>
+
+              <th class="py-3 text-muted fw-bold">
+                Category
+              </th>
+
+              <th class="py-3 text-muted fw-bold">
+                Mode
+              </th>
+
+              <th class="py-3 text-muted fw-bold">
+                Venue
+              </th>
+
+              <th class="py-3 text-muted fw-bold">
+                Capacity
+              </th>
+
+              <th class="py-3 text-muted fw-bold">
+                Status
+              </th>
+
+              <th class="pe-4 py-3 text-muted fw-bold text-end">
+                Actions
+              </th>
+
+            </tr>
+
+          </thead>
+
+          <!-- Table Body -->
+          <tbody>
+
+            <tr *ngFor="let event of events">
+
+              <!-- Title -->
+              <td class="ps-4">
+
+                <div class="fw-bold text-dark">
+                  {{ event.title }}
+                </div>
+
+                <small class="text-muted">
+                  {{ event.description }}
+                </small>
+
+              </td>
+
+              <!-- Category -->
+              <td>
+
+                <span class="badge bg-primary">
+                  {{ event.category }}
+                </span>
+
+              </td>
+
+              <!-- Mode -->
+              <td>
+
+                <span class="badge bg-dark">
+                  {{ event.mode }}
+                </span>
+
+              </td>
+
+              <!-- Venue -->
+              <td class="text-muted">
+
+                <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                {{ event.venue || 'Online' }}
+
+              </td>
+
+              <!-- Capacity -->
+              <td>
+
+                <span class="fw-bold text-success">
+                  {{ event.capacity }}
+                </span>
+
+              </td>
+
+              <!-- Status -->
+              <td>
+
+                <span
+                  class="badge"
+                  [ngClass]="{
+                    'bg-secondary': event.status === 'DRAFT',
+                    'bg-success': event.status === 'ONGOING',
+                    'bg-danger': event.status === 'CANCELLED',
+                    'bg-warning text-dark': event.status === 'REGISTRATION_CLOSED',
+                    'bg-info text-dark': event.status === 'COMPLETED'
+                  }">
+
+                  {{ event.status }}
+
+                </span>
+
+              </td>
+
+              <!-- Actions -->
+              <td class="pe-4 text-end">
+
+                <button
+                  class="btn btn-sm btn-outline-info me-2 rounded-pill px-3"
+                  (click)="viewRegistrations(event)">
+                  <i class="bi bi-people me-1"></i>
+                  Registrations
+                </button>
+
+                <!-- Publish Button -->
+                <button
+                  class="btn btn-sm me-2 rounded-pill px-3"
+                  [ngClass]="event.published ? 'btn-success disabled' : 'btn-outline-success'"
+                  (click)="!event.published && publishEvent(event)">
+                  <i class="bi" [ngClass]="event.published ? 'bi-check-circle-fill' : 'bi-upload'"></i>
+                  {{ event.published ? 'Published' : 'Publish' }}
+                </button>
+
+                <!-- Delete/Cancel Button -->
+                <button
+                  *ngIf="!event.published"
+                  class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                  (click)="deleteEvent(event)">
+                  <i class="bi bi-trash3 me-1"></i>
+                  Delete
+                </button>
+
+                <button
+                  *ngIf="event.published"
+                  class="btn btn-sm btn-outline-warning rounded-pill px-3"
+                  (click)="cancelEvent(event)"
+                  [disabled]="event.status === 'CANCELLED'">
+                  <i class="bi bi-x-circle me-1"></i>
+                  {{ event.status === 'CANCELLED' ? 'Cancelled' : 'Cancel' }}
+                </button>
+
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

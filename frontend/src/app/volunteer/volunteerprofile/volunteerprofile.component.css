@@ -1,0 +1,70 @@
+/* volunteer-profile.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:host {
+  --primary: #6366f1;
+  --bg: #f8fafc;
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --white: #ffffff;
+  --transition: all 0.3s ease;
+  font-family: 'Outfit', sans-serif;
+}
+
+.profile-container { padding: 10px 0; }
+.header { margin-bottom: 32px; }
+.header h2 { font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+.header p { color: var(--text-muted); }
+
+.profile-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 32px; align-items: flex-start; }
+
+.card { background: white; border-radius: 32px; padding: 32px; border: 1px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+
+/* IDENTITY CARD */
+.identity-card { text-align: center; }
+.avatar-large { width: 120px; height: 120px; border-radius: 50%; border: 4px solid #eef2ff; margin: 0 auto 20px; overflow: hidden; }
+.avatar-large img { width: 100%; height: 100%; object-fit: cover; }
+
+.identity-card h3 { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.role-tag { font-size: 13px; font-weight: 600; color: var(--primary); background: #eef2ff; padding: 4px 12px; border-radius: 100px; display: inline-block; }
+
+.impact-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; padding: 20px 0; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; }
+.impact-item label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
+.impact-item p { font-size: 20px; font-weight: 800; color: var(--text); margin-top: 4px; }
+
+.skills-section { text-align: left; }
+.skills-section label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; display: block; }
+.skills-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.skill-tag { font-size: 11px; font-weight: 600; color: #475569; background: #f1f5f9; padding: 4px 10px; border-radius: 8px; }
+
+/* DETAILS CARD */
+.details-card .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+.details-card h3 { font-size: 20px; font-weight: 700; color: var(--text); }
+
+.btn-edit { background: none; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: var(--transition); }
+.btn-edit:hover { border-color: var(--primary); color: var(--primary); }
+
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.full-width { grid-column: span 2; }
+
+.form-group label { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 8px; display: block; }
+.form-group input, .form-group textarea { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid #e2e8f0; background: #f8fafc; font-family: inherit; font-size: 14px; transition: var(--transition); }
+.form-group input:focus, .form-group textarea:focus { background: white; border-color: var(--primary); outline: none; box-shadow: 0 0 0 4px #eef2ff; }
+.form-group textarea { height: 120px; resize: none; }
+.form-group input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.hint { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+
+.form-actions { margin-top: 32px; display: flex; justify-content: flex-end; }
+.btn-save { background: var(--primary); color: white; border: none; padding: 14px 32px; border-radius: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); }
+.btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(99, 102, 241, 0.3); }
+
+.loader { text-align: center; padding: 100px 0; }
+.spinner { width: 40px; height: 40px; border: 4px solid #f1f5f9; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+@media (max-width: 1024px) {
+  .profile-grid { grid-template-columns: 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .full-width { grid-column: span 1; }
+}
