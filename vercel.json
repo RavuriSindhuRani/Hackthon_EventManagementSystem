@@ -1,17 +1,22 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+
   "services": {
     "frontend": {
       "root": "frontend",
-      "framework": "angular"
+      "framework": "angular",
+      "outputDirectory": "dist/frontend/browser"
     },
+
     "backend": {
       "root": "backend",
       "entrypoint": "app.js"
     }
   },
+
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/api/:path*",
       "destination": {
         "service": "backend"
       }

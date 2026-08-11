@@ -3,65 +3,71 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-var mongoose = require('mongoose')//imported
-var cors = require('cors')//imported
-var dotenv = require('dotenv').config();//imported
+var mongoose = require('mongoose');
+var cors = require('cors');
+require('dotenv').config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var attendanceRouter = require('./routes/attendance');//Added
-var authRouter = require('./routes/auth');//Added
-var eventsRouter = require('./routes/events');//Added
-var notficationsRouter = require('./routes/notifications');//Added
-var registrationsRouter = require('./routes/registrations');//Added
-var reportsRouter = require('./routes/reports');//Added
-var volunteerHoursRouter = require('./routes/volunteerHours');//Added
-var contactRouter = require('./routes/contact');//Added
+var attendanceRouter = require('./routes/attendance');
+var authRouter = require('./routes/auth');
+var eventsRouter = require('./routes/events');
+var notificationsRouter = require('./routes/notifications');
+var registrationsRouter = require('./routes/registrations');
+var reportsRouter = require('./routes/reports');
+var volunteerHoursRouter = require('./routes/volunteerHours');
+var contactRouter = require('./routes/contact');
+
 var app = express();
 
-
-
-app.listen(4300,()=>{//Added
-  console.log("server running at http://localhost:4300/")
-})
-
-mongoose.connect(process.env.MongoDb_Connection)
-.then(()=>console.log("MongoDb Connetced"))
-.catch((err)=>console.log(err))
-
-// view engine setup
-app.use(cors())
+// Middleware
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/attendance', attendanceRouter);//Added
-app.use('/auth', authRouter);//Added
-app.use('/events', eventsRouter);//Added
-app.use('/notfications', notficationsRouter);//Added
-app.use('/registrations', registrationsRouter);//Added
-app.use('/reports', reportsRouter);//Added
-app.use('/volunteer-hours', volunteerHoursRouter);//Added
-app.use('/contact', contactRouter);//Added
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// MongoDB
+mongoose.connect(process.env.MongoDb_Connection)
+    .then(() => console.log('MongoDB Connected'))
+    .catch((err) => console.log('MongoDB connection error:', err));
+
+// API Routes
+app.use('/api', indexRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/attendance', attendanceRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/events', eventsRouter);
+app.use('/api/notifications', notificationsRouter);
+app.use('/api/registrations', registrationsRouter);
+app.use('/api/reports', reportsRouter);
+app.use('/api/volunteer-hours', volunteerHoursRouter);
+app.use('/api/contact', contactRouter);
+
+// 404 Handler
+app.use(function (req, res, next) {
+    next(createError(404));
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// Error Handler
+app.use(function (err, req, res, next) {
+    res.status(err.status || 500);
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+    res.json({
+        success: false,
+        message: err.message || 'Internal Server Error'
+    });
 });
 
+// Local Development
+if (require.main === module) {
+    const PORT = process.env.PORT || 4300;
+
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+    });
+}
+
+// Vercel
 module.exports = app;
