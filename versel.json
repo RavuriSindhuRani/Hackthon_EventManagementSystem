@@ -1,0 +1,12 @@
+{
+  "services": {
+    "frontend": {
+      "root": "frontend/",
+      "framework": "angular"
+    },
+    "backend": {
+      "root": "backend/",
+      "entrypoint": "api/index"
+    }
+  }
+}
