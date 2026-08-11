@@ -18,7 +18,6 @@
     "form-data": "^4.0.5",
     "formdata": "^0.10.4",
     "http-errors": "~1.6.3",
-    "jade": "~1.11.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.2",
     "morgan": "~1.9.1",
